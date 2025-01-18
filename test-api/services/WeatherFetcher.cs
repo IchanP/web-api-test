@@ -1,5 +1,5 @@
+using Newtonsoft.Json;
 using test_api.Extensions;
-using Microsoft.Extensions.Configuration;
 
 namespace test_api.services
 {
@@ -22,10 +22,15 @@ namespace test_api.services
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"{jsonResponse}\n");
 
-                /* Unknown x = await client.GetFromJsonAsync<Unknown>(
-                     ""
-                 // TODO - Serializer? 
-                 ); */
+                var deserialized = JsonConvert.DeserializeObject(jsonResponse);
+                // Deserialize the response and throw if it's null
+                if (deserialized is null)
+                {
+                    throw new ArgumentNullException(nameof(deserialized), "Deserialization resulted in null object");
+                }
+
+                // Should return the deserialized response so it can be written to the cache in service.
+                logger.Log(LogLevel.Information, "Deserialized response: {Response}", deserialized);
 
             }
             catch (Exception e)
