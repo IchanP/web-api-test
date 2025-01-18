@@ -10,5 +10,5 @@ public class WeatherStation
     public double Height { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
-    public List<WeatherValue> Value { get; set; } = new();
+    public List<WeatherValue> Value { get; set; } = [];
 }

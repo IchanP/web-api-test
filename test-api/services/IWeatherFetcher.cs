@@ -2,5 +2,5 @@ namespace test_api.services;
 
 public interface IWeatherFetcher
 {
-    Task FetchWeather();
+    Task<List<WeatherStation>> FetchWeather();
 }

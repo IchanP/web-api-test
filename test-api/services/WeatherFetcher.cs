@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using test_api.Extensions;
 
 namespace test_api.services
@@ -7,7 +8,7 @@ namespace test_api.services
     {
         private readonly string clientName = configuration["WeatherClientName"]
             ?? throw new ArgumentNullException("WeatherClientName configuration is missing");
-        public async Task FetchWeather()
+        public async Task<List<WeatherStation>> FetchWeather()
         {
             using HttpClient client = factory.CreateClient(clientName);
 
@@ -22,21 +23,23 @@ namespace test_api.services
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"{jsonResponse}\n");
 
-                var deserialized = JsonConvert.DeserializeObject(jsonResponse);
-                // Deserialize the response and throw if it's null
-                if (deserialized is null)
+                JObject jObject = JObject.Parse(jsonResponse);
+
+                List<WeatherStation>? stations = jObject["station"]?.ToObject<List<WeatherStation>>();
+                if (stations == null)
                 {
-                    throw new ArgumentNullException(nameof(deserialized), "Deserialization resulted in null object");
+                    throw new ArgumentNullException(nameof(stations), "Deserialization resulted in null object");
                 }
 
                 // Should return the deserialized response so it can be written to the cache in service.
-                logger.Log(LogLevel.Information, "Deserialized response: {Response}", deserialized);
-
+                logger.Log(LogLevel.Information, "Successfully deserialized response from hourly data.");
+                return stations;
             }
             catch (Exception e)
             {
                 // TODO should add our own custom message depending on the type of error
                 logger.LogError(e.Message);
+                throw; // Rethrow the error 
             }
         }
     }
