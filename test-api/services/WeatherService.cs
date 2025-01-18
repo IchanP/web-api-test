@@ -1,5 +1,6 @@
 
 using test_api.repositories;
+using test_api.Util;
 
 namespace test_api.services
 {
@@ -13,7 +14,7 @@ namespace test_api.services
                 try
                 {
 
-                    TimeSpan delay = CalculateNextRuntime(1, 1);
+                    TimeSpan delay = Util.Timer.CreateTimeSpanOffset(1, 1);
                     // TODO sleep until XX:01
                     await Task.Delay(delay, stoppingToken);
                     List<WeatherStation> stationData = await fetcher.FetchWeather();
@@ -31,13 +32,6 @@ namespace test_api.services
                     await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken); // Add a retry after a delay to avoid repeated errors
                 }
             }
-        }
-
-        private TimeSpan CalculateNextRuntime(int hoursToAdd, int minute)
-        {
-            DateTime timeNow = DateTime.Now;
-            DateTime nextRunTime = timeNow.Date.AddHours(timeNow.Hour + hoursToAdd).AddMinutes(minute);
-            return nextRunTime - timeNow;
         }
     }
 }
