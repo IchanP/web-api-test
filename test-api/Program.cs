@@ -1,3 +1,4 @@
+using test_api.repositories;
 using test_api.services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,8 @@ builder.Services.AddHttpClient<WeatherFetcher>(httpClientName, client =>
 });
 
 builder.Services.AddSingleton<IWeatherFetcher, WeatherFetcher>();
+builder.Services.AddSingleton<IWeatherRepository, WeatherRepository>();
+builder.Services.AddHostedService<WeatherService>();
 
 var app = builder.Build();
 

@@ -9,24 +9,17 @@ namespace test_api.controller
     [ApiController]
     public class TestController : ControllerBase
     {
-        private readonly IWeatherFetcher weatherFetcher;
-
-        public TestController(IWeatherFetcher weatherFetcher)
-        {
-            this.weatherFetcher = weatherFetcher;
-        }
-
-        /*         [HttpGet]
-                // NOTE - Task is for asynchronous fetching?
-                public async Task<ActionResult<Item>> GetItem(int id)
-                {
-
-                } */
         [HttpGet]
-        public async Task<IActionResult> GetItem()
+        // NOTE - Task is for asynchronous fetching?
+        public Item GetItem()
         {
-            await this.weatherFetcher.FetchWeather();
-            return Ok("Fetched weather");
+            var item = new Item
+            {
+                Name = "",
+                Id = 1
+            };
+            return item;
         }
+
     }
 }
